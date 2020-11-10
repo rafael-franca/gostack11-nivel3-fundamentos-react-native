@@ -73,13 +73,21 @@ const CartProvider: React.FC = ({ children }) => {
   }, [products]);
 
   const decrement = useCallback(async id => {
-    setProducts(
-      products.map(product =>
-        product.id === id
-          ? { ...product, quantity: product.quantity - 1 }
-          : product,
+    const removeProduct = products.find(product => product.id === id && product.quantity === 1);
+
+    if (removeProduct) {
+      setProducts(
+        products.filter(product => product.id !== id)
       )
-    );
+    } else {
+      setProducts(
+        products.map(product =>
+          product.id === id
+            ? { ...product, quantity: product.quantity - 1 }
+            : product,
+        )
+      );
+    }
 
     await AsyncStorage.setItem(
       '@GoMarketplace:products',
